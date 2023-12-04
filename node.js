@@ -26,3 +26,8 @@ app.post("/codiVideo", (req, res) => {
     generarCodiAleatori();
     console.log(generarCodiAleatori())
 })
+
+app.get("/llistaVideos", (req, res) =>{
+    var videos = [{Video1: "Cara al Sol Remix"},{Video2: "Churumbel de Malaga"}, {Video3: "Mandanga Style"}, {Video4: "Varela"}]
+    res.json(videos)
+})
