@@ -6,8 +6,11 @@ const socketIO = require('socket.io');
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
+const randomstring = require('randomstring');
+
 
 const cors = require('cors');
+const socket = require("nodemon");
 
 app.use(cors());
 app.use(express.json());
@@ -29,24 +32,14 @@ var videos = [
 io.on('connection', (socket) => {
     console.log('Client conectat correctament');
     socket.emit('listaVideos', videos)
+
+    const randomCode = randomstring.generate({
+        length: 4,
+        charset: 'alphanumeric',
+    });
+
+    socket.emit('codeFromServer', { code: randomCode });
 });
 
 app.use(express.static('Videos'));
 
-function generarCodiAleatori() {
-    const caracters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let codi = '';
-    for (let i = 0; i < 4; i++) {
-        codi += caracters.charAt(Math.floor(Math.random() * caracters.length));
-    }
-    return codi;
-}
-
-app.post("/codiVideo", (req, res) => {
-    generarCodiAleatori();
-    console.log(generarCodiAleatori())
-})
-
-app.get('/listaVideos', (req, res) => {
-
-});
