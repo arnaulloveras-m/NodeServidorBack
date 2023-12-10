@@ -1,16 +1,19 @@
 //NodeJS: localhost:3080
+const {Server} = require("socket.io");
 const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIO(server);
-const randomstring = require('randomstring');
+//const io = socketIO(server);
+const io = new Server(7777);
 
+const randomstring = require('randomstring');
 
 const cors = require('cors');
 const socket = require("nodemon");
+
 
 app.use(cors());
 app.use(express.json());
@@ -28,17 +31,25 @@ var videos = [
     { Video4: 'Varela' }
 ];
 
+var codi = "";
 
-io.on('connection', (socket) => {
-    console.log('Client conectat correctament');
-    socket.emit('listaVideos', videos)
-
-    const randomCode = randomstring.generate({
+function randomCode(){
+    codi = randomstring.generate({
         length: 4,
         charset: 'alphanumeric',
     });
 
-    socket.emit('codeFromServer', { code: randomCode });
+    return codi
+}
+
+
+io.on('connection', (socket) => {
+    console.log('Client conectat correctament');
+    socket.emit('listaVideos', videos)
+    socket.on("verifyCode", (res)=>{
+        console.log(res)
+    })
+    socket.emit('codeFromServer', { code: randomCode() });
 });
 
 app.use(express.static('Videos'));
